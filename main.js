@@ -224,6 +224,123 @@ function handleFile(file){
   reader.readAsText(file);
 }
 
+/**
+ * Taste Map Visualization — SCAFFOLD
+ * ------------------------------------
+ * Fill in each TODO. This expects taste_map.json (produced by
+ * taste_map_pipeline.py) to already exist alongside your site files.
+ *
+ * Expected shape of the loaded data — see export_taste_map() in the
+ * Python scaffold for exactly what each field is:
+ *   {
+ *     points: [{title, author, x, y, cluster, my_rating, read_year}, ...],
+ *     centroid: {x, y},
+ *     cluster_labels: {"0": "...", "1": "...", ...},
+ *     trajectory: [{title, x, y, read_year}, ...]
+ *   }
+ */
+
+async function loadTasteMap() {
+  // TODO: fetch("taste_map.json"), parse it, return the object.
+  // What happens if the file doesn't exist yet? Decide what the
+  // page should show (nothing? a message?) rather than letting
+  // an unhandled promise rejection break the whole page.
+}
+
+function renderScatter(svg, data) {
+  /**
+   * Draw one circle per book in data.points, positioned by x/y,
+   * colored by cluster.
+   *
+   * Think about:
+   * - d3.scaleLinear for mapping your x/y data range to pixel
+   *   coordinates within the SVG's actual width/height (the raw
+   *   x/y from PCA/UMAP won't be in pixel units)
+   * - d3.scaleOrdinal (or just an array you index into) for mapping
+   *   cluster id -> a color from your site's palette
+   * - what should happen on hover? You already built tooltip logic
+   *   for the velocity/genre charts in main.js — this can reuse
+   *   that same pattern.
+   *
+   * TODO: implement the D3 join (selectAll(".point").data(...).join(...))
+   * and the scales it depends on.
+   */
+}
+
+function renderCentroid(svg, data) {
+  /**
+   * Draw a single, visually distinct marker (different shape or size
+   * than the book points) at data.centroid — this is "the center of
+   * your taste," and should read as clearly different from an
+   * individual book.
+   *
+   * TODO: append one marker using the SAME x/y scales as renderScatter
+   * (create the scales once, pass them into both functions, rather
+   * than rebuilding them twice with potentially different domains).
+   */
+}
+
+function renderTrajectory(svg, data) {
+  /**
+   * Connect data.trajectory points, in order, with a line — this
+   * shows the path your taste took over time.
+   *
+   * Look up: d3.line(), which takes an accessor for x and y and
+   * returns a path-generator function you call on your data array.
+   *
+   * Think about: should the line be drawn all at once, or animated
+   * in (stroke-dasharray/stroke-dashoffset trick) the way your bar
+   * charts animate on scroll? Not required for a first version —
+   * get it rendering as a static line first.
+   *
+   * TODO: build the line generator, append a single <path> using it.
+   */
+}
+
+function renderClusterLegend(container, data) {
+  /**
+   * Show what each color means — data.cluster_labels maps cluster id
+   * to a human-readable name your Python pipeline generated.
+   *
+   * TODO: render a small legend (color swatch + label) for each
+   * entry in cluster_labels. Keep it simple — a flex row of
+   * swatch+text pairs is enough, doesn't need to be fancy.
+   */
+}
+
+function showBookDetail(book) {
+  /**
+   * Called when a point is clicked — show that book's info somewhere
+   * on the page (title, author, rating, which cluster it belongs to).
+   *
+   * TODO: decide where this appears — a fixed panel that updates in
+   * place is simpler to build than a modal, and avoids needing to
+   * manage open/close state.
+   */
+}
+
+async function initTasteMap() {
+  const data = await loadTasteMap();
+  if (!data) return;
+
+  const svg = d3.select("#taste-map-chart");
+  // TODO: set svg width/height/viewBox to match your site's chart
+  // sizing conventions (see renderVelocity/renderGenres in main.js
+  // for the pattern you've already established).
+
+  renderScatter(svg, data);
+  renderCentroid(svg, data);
+  renderTrajectory(svg, data);
+  renderClusterLegend(document.getElementById("taste-map-legend"), data);
+
+  // TODO: wire up click handlers on each point to call showBookDetail.
+  // Where in renderScatter should this listener be attached?
+}
+
+// TODO: call initTasteMap() — but only once the taste map section
+// scrolls into view, the same way your bar charts wait for
+// onScrollReveal() rather than rendering immediately on page load.
+
 // wire up import controls
 d3.select("#file-btn").on("click", () => document.getElementById("file-input").click());
 d3.select("#file-input").on("change", function(){
